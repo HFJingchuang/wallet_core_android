@@ -19,6 +19,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -27,5 +36,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
+    // https://mvnrepository.com/artifact/org.web3j/utils
+    implementation group: 'org.web3j', name: 'utils', version: '4.6.0-android'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
+    // https://mvnrepository.com/artifact/net.i2p.crypto/eddsa
+    implementation group: 'net.i2p.crypto', name: 'eddsa', version: '0.3.0'
+    implementation 'com.alibaba:fastjson:1.1.71.android'
 }
