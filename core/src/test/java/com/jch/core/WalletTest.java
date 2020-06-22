@@ -40,11 +40,11 @@ public class WalletTest {
         // 密钥创建钱包
         ECKeyPair ecKeyPair = ECKeyPair.create(Numeric.toBigIntNoPrefix("3dafb4ebb061ec56527beacf659b83c4c7ac794389caf8ea191f0b2870362706"));
         WalletFile walletFile = Wallet.createLight(ChainTypes.ETH, "q12346", ecKeyPair);
-        Assert.assertEquals("481ffc8100efb193170d349144e0e4a1c28431a6", walletFile.getAddress());
+        Assert.assertEquals("2062154cd708d9b1d61c526628912b69d98a014c", walletFile.getAddress());
 
-        ecKeyPair = ECKeyPair.create(Numeric.hexStringToByteArray("3a556aaf1a8e291d5fad2b0100a1295c7602e894b6af1cdc25849d853d2ff974"));
+        ecKeyPair = ECKeyPair.create(Numeric.hexStringToByteArray("3dafb4ebb061ec56527beacf659b83c4c7ac794389caf8ea191f0b2870362706"));
         walletFile = Wallet.createLight(ChainTypes.ETH, "q12346", ecKeyPair);
-        Assert.assertEquals("481ffc8100efb193170d349144e0e4a1c28431a6", walletFile.getAddress());
+        Assert.assertEquals("2062154cd708d9b1d61c526628912b69d98a014c", walletFile.getAddress());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class WalletTest {
         WalletFile walletFile = Wallet.createLight(ChainTypes.MOAC, "q12346", ecKeyPair);
         Assert.assertEquals("481ffc8100efb193170d349144e0e4a1c28431a6", walletFile.getAddress());
 
-        ecKeyPair = ECKeyPair.create(Numeric.hexStringToByteArray("3dafb4ebb061ec56527beacf659b83c4c7ac794389caf8ea191f0b2870362706"));
+        ecKeyPair = ECKeyPair.create(Numeric.hexStringToByteArray("3a556aaf1a8e291d5fad2b0100a1295c7602e894b6af1cdc25849d853d2ff974"));
         walletFile = Wallet.createLight(ChainTypes.MOAC, "q12346", ecKeyPair);
         Assert.assertEquals("481ffc8100efb193170d349144e0e4a1c28431a6", walletFile.getAddress());
     }

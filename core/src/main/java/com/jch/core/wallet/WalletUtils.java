@@ -178,7 +178,7 @@ public class WalletUtils {
                 keyPair = ECKeyPair.create(Numeric.hexStringToByteArray(privateKey));
                 break;
             case SWTC:
-                keyPair = JWallet.fromSecret(password, isED25519);
+                keyPair = JWallet.fromSecret(privateKey, isED25519);
                 break;
         }
 
