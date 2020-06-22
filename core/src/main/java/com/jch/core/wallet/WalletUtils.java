@@ -168,6 +168,23 @@ public class WalletUtils {
         return generateWalletFile(chainTypes, password, keyPair, false);
     }
 
+    public static WalletFile generateWalletFromPrivateKey(
+            ChainTypes chainTypes, String privateKey, String password, boolean isED25519)
+            throws CipherException {
+        IKeyPair keyPair = null;
+        switch (chainTypes) {
+            case ETH:
+            case MOAC:
+                keyPair = ECKeyPair.create(Numeric.hexStringToByteArray(privateKey));
+                break;
+            case SWTC:
+                keyPair = JWallet.fromSecret(password, isED25519);
+                break;
+        }
+
+        return generateWalletFile(chainTypes, password, keyPair, false);
+    }
+
     public static IKeyPair loadCredentials(ChainTypes chainTypes, String password, boolean isED25519, WalletFile walletFile)
             throws CipherException {
         return Wallet.decrypt(chainTypes, password, isED25519, walletFile);

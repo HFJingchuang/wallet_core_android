@@ -17,7 +17,6 @@ import com.jch.core.cypto.ECKeyPair;
 import com.jch.core.cypto.IKeyPair;
 import com.jch.core.cypto.Keys;
 import com.jch.core.swtc.JWallet;
-import com.jch.core.swtc.Seed;
 
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
