@@ -21,9 +21,12 @@ import com.jch.core.cypto.IKeyPair;
 import com.jch.core.cypto.Keys;
 import com.jch.core.cypto.MnemonicUtils;
 import com.jch.core.cypto.SecureRandomUtils;
+import com.jch.core.cypto.wordlists.WordCount;
+import com.jch.core.cypto.wordlists.WordList;
 import com.jch.core.swtc.JWallet;
 import com.jch.core.swtc.Seed;
-import com.jch.core.wallet.BIP44.ChainType;
+import com.jch.core.wallet.BIP44.AddressIndex;
+import com.jch.core.wallet.BIP44.Bip44WalletGenerator;
 
 import org.web3j.utils.Numeric;
 
@@ -119,30 +122,17 @@ public class WalletUtils {
      * @throws CipherException if the underlying cipher is not available
      * @throws IOException     if the destination cannot be written to
      */
-    public static WalletFile generateBip39Wallet(ChainTypes chainTypes, String password, boolean isED25519)
+    public static Bip39Wallet generateBip39Wallet(ChainTypes chainTypes, WordList wordList, WordCount wordCount, String password, boolean isED25519)
             throws CipherException {
         byte[] initialEntropy = new byte[16];
         secureRandom.nextBytes(initialEntropy);
 
-        String mnemonic = MnemonicUtils.generateMnemonic(initialEntropy);
-        byte[] seedByte = MnemonicUtils.generateSeed(mnemonic, password);
-        IKeyPair keyPair = null;
-        switch (chainTypes) {
-            case ETH:
-            case MOAC:
-                keyPair = ECKeyPair.create(sha256(seedByte));
-                break;
-            case SWTC:
-                Seed seed = new Seed();
-                if (isED25519) {
-                    seed.setEd25519();
-                }
-                String secret = seed.encodeSeed(Arrays.copyOf(seedByte, 16));
-                keyPair = Seed.fromBase58(secret).keyPair();
-                break;
-        }
+        return new Bip44WalletGenerator(wordList, wordCount).generateWallet(chainTypes, password, isED25519);
+    }
 
-        return generateWalletFile(chainTypes, password, keyPair, false);
+    public static Bip39Wallet generateBip44Wallet(ChainTypes chainTypes, WordList wordList, WordCount wordCount, String password, AddressIndex addressIndex, boolean isED25519)
+            throws CipherException {
+        return new Bip44WalletGenerator(wordList, wordCount).generateBip44Wallet(chainTypes, password, addressIndex, isED25519);
     }
 
     /**
