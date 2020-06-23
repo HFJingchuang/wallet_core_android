@@ -41,7 +41,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import static com.jch.core.cypto.SecureRandomUtils.secureRandom;
 import static org.web3j.compat.Compat.UTF_8;
-import static org.web3j.compat.Compat.requireNonNull;
 
 /**
  * Ethereum wallet file management. For reference, refer to <a
