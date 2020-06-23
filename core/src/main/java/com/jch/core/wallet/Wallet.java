@@ -16,6 +16,7 @@ import com.jch.core.cypto.CipherException;
 import com.jch.core.cypto.ECKeyPair;
 import com.jch.core.cypto.IKeyPair;
 import com.jch.core.cypto.Keys;
+import com.jch.core.cypto.MneKeyPair;
 import com.jch.core.swtc.JWallet;
 
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -253,6 +254,8 @@ public class Wallet {
                 return ECKeyPair.create(privateKey);
             case SWTC:
                 return JWallet.fromSecret(new String(privateKey, UTF_8), isED25519);
+            case MNEMNOIC:
+                return new MneKeyPair(new String(privateKey, UTF_8));
         }
         return null;
     }

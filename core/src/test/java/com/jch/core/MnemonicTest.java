@@ -2,6 +2,7 @@ package com.jch.core;
 
 import com.jch.core.cypto.CipherException;
 import com.jch.core.cypto.ECKeyPair;
+import com.jch.core.cypto.MneKeyPair;
 import com.jch.core.cypto.wordlists.Chinese_simplified;
 import com.jch.core.cypto.wordlists.WordCount;
 import com.jch.core.swtc.EDKeyPair;
@@ -24,6 +25,17 @@ import org.junit.Test;
  */
 public class MnemonicTest {
     final static String PASSWORD = "pwd123456";
+
+    @Test
+    public void mnemonic() throws CipherException {
+        String mne = "津 统 迹 向 震 接 艺 涂 盗 催 机 够";
+        MneKeyPair mneKeyPair = new MneKeyPair(mne);
+        WalletFile walletFile = Wallet.createLight(ChainTypes.MNEMNOIC, "pwd123456", mneKeyPair);
+        System.out.println(walletFile.toString());
+        MneKeyPair mneKeyPair1 = (MneKeyPair) Wallet.decrypt(ChainTypes.MNEMNOIC, "pwd123456", false, walletFile);
+
+        Assert.assertEquals(mneKeyPair.getSecret(), mneKeyPair1.getSecret());
+    }
 
     @Test
     public void create_eth_wallet_BIP39() throws CipherException {

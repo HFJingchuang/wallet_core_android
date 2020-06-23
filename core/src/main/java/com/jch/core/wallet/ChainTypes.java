@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import com.jch.core.exceptions.CoinNotFindException;
 
 public enum ChainTypes {
-    ETH("ETH", 60), MOAC("MOAC", 314), SWTC("SWTC", 315);
+    MNEMNOIC("MNEMNOIC", 0), ETH("ETH", 60), MOAC("MOAC", 314), SWTC("SWTC", 315);
     private String chainName;
     private int chainType;
 

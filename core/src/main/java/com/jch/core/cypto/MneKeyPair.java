@@ -5,7 +5,7 @@ import java.math.BigInteger;
 /**
  * 用于助记词生成KeyStore
  */
-class MneKeyPair implements IKeyPair {
+public class MneKeyPair implements IKeyPair {
     private final String mnemonics;
 
     public MneKeyPair(String mnemonics) {
