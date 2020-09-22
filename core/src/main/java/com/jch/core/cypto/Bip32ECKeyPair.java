@@ -183,7 +183,7 @@ public class Bip32ECKeyPair extends ECKeyPair {
         return this.getPrivateKey() != null || parentHasPrivate;
     }
 
-    private static byte[] bigIntegerToBytes32(BigInteger b) {
+    public static byte[] bigIntegerToBytes32(BigInteger b) {
         final int numBytes = 32;
 
         byte[] src = b.toByteArray();

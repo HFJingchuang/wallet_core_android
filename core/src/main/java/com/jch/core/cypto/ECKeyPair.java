@@ -12,13 +12,7 @@
  */
 package com.jch.core.cypto;
 
-import androidx.core.app.NavUtils;
-
 import com.jch.core.eth.Sign;
-
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.util.Arrays;
 
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
@@ -26,8 +20,11 @@ import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
-
 import org.web3j.utils.Numeric;
+
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.util.Arrays;
 
 /**
  * Elliptic Curve SECP-256k1 generated key pair.

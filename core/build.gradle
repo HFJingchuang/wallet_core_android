@@ -46,4 +46,6 @@ dependencies {
     // https://mvnrepository.com/artifact/net.i2p.crypto/eddsa
     implementation group: 'net.i2p.crypto', name: 'eddsa', version: '0.3.0'
     implementation 'com.alibaba:fastjson:1.1.71.android'
+    implementation 'org.bitcoinj:bitcoinj-core:0.15.8'
+    implementation 'com.google.guava:guava:29.0-android'
 }

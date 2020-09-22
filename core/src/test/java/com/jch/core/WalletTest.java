@@ -1,5 +1,6 @@
 package com.jch.core;
 
+import com.jch.core.btc.BWallet;
 import com.jch.core.cypto.CipherException;
 import com.jch.core.cypto.ECKeyPair;
 import com.jch.core.cypto.Keys;
@@ -10,6 +11,16 @@ import com.jch.core.wallet.ChainTypes;
 import com.jch.core.wallet.Wallet;
 import com.jch.core.wallet.WalletFile;
 
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.LegacyAddress;
+import org.bitcoinj.core.SegwitAddress;
+import org.bitcoinj.core.Utils;
+import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptBuilder;
+import org.bitcoinj.script.ScriptPattern;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Assert;
 import org.junit.Test;
 import org.web3j.utils.Numeric;
@@ -17,6 +28,11 @@ import org.web3j.utils.Numeric;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.Arrays;
+import java.util.List;
+
+import static net.i2p.crypto.eddsa.Utils.bytesToHex;
+import static net.i2p.crypto.eddsa.Utils.hexToBytes;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -52,6 +68,7 @@ public class WalletTest {
         // 随机创建钱包
         ECKeyPair ecKeyPair = Keys.createEcKeyPair();
         WalletFile walletFile = Wallet.createLight(ChainTypes.MOAC, "q12346", ecKeyPair);
+        System.out.println(walletFile.getAddress());
         // 解密KeyStore
         ECKeyPair ecKeyPair1 = (ECKeyPair) Wallet.decrypt(ChainTypes.MOAC, "q12346", false, walletFile);
         Assert.assertEquals(ecKeyPair.getPrivateKey(), ecKeyPair1.getPrivateKey());
@@ -132,6 +149,26 @@ public class WalletTest {
         Assert.assertEquals(_keyPair1.getAddress(), edKeyPair.getAddress());
         Assert.assertEquals(_keyPair1.getSecret(), edKeyPair.getSecret());
     }
+
+    @Test
+    public void create_btc_wallet() {
+        org.bitcoinj.wallet.Wallet wallet = BWallet.generate();
+        System.out.println(wallet.currentReceiveAddress());
+        System.out.println(wallet.getActiveKeyChain().getMnemonicCode());
+        System.out.println(wallet.currentReceiveKey().getPrivateKeyAsHex());
+        System.out.println(wallet.currentReceiveKey().getPrivKey());
+        System.out.println(wallet.currentReceiveKey().getPrivateKeyAsWiF(MainNetParams.get()));
+
+        ECKey ecKey = BWallet.fromPrivateKey(wallet.currentReceiveKey().getPrivateKeyAsWiF(MainNetParams.get()));
+        System.out.println("普通地址: " + LegacyAddress.fromKey(MainNetParams.get(), ecKey));//
+        System.out.println("隔离见证（原生）: " + BWallet.createSegwitAddress(ecKey));//
+        System.out.println("隔离见证（兼容）: " + BWallet.createP2SH(ecKey));// 隔离见证（兼容）
+
+        org.bitcoinj.wallet.Wallet wallet1 = BWallet.fromMen(wallet.getActiveKeyChain().getMnemonicCode());
+        System.out.println(wallet1.currentReceiveAddress());
+
+    }
+
 
     final static String eth_keyStore = "{\"chainType\":\"ETH\"," +
             "\"address\":\"2062154cd708d9b1d61c526628912b69d98a014c\"," +

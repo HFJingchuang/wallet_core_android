@@ -1,5 +1,6 @@
 package com.jch.core;
 
+import com.jch.core.cypto.CipherException;
 import com.jch.core.swtc.Config;
 import com.jch.core.swtc.EDKeyPair;
 import com.jch.core.swtc.JWallet;
@@ -10,6 +11,9 @@ import com.jch.core.swtc.core.coretypes.Amount;
 import com.jch.core.swtc.core.coretypes.uint.UInt32;
 import com.jch.core.swtc.core.types.known.tx.signed.SignedTransaction;
 import com.jch.core.swtc.core.types.known.tx.txns.Payment;
+import com.jch.core.wallet.ChainTypes;
+import com.jch.core.wallet.Wallet;
+import com.jch.core.wallet.WalletFile;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -54,7 +58,7 @@ public class SWTCTransactionTest {
     }
 
     @Test
-    public void signLocal() {
+    public void signLocal() throws CipherException {
         K256KeyPair keyPair = (K256KeyPair) JWallet.generate(false);
         System.out.println(keyPair.getAddress());
 
@@ -73,7 +77,10 @@ public class SWTCTransactionTest {
         Assert.assertEquals(signedTx.tx_blob, signedTx1.tx_blob);
 
         EDKeyPair keyPair1 = (EDKeyPair) JWallet.generate(true);
-
+        System.out.println(keyPair1.getSecret());
+        System.out.println(keyPair1.getAddress());
+        WalletFile walletFile = Wallet.createLight(ChainTypes.SWTC, "'pwd123456'", keyPair1);
+        System.out.println(walletFile.toString());
         payment = new Payment();
         payment.as(AccountID.Account, keyPair1.getAddress());
         payment.as(AccountID.Destination, "j4fkSm9kUHXtXhA3pj2dNnmSHtuqtT76Ka");
