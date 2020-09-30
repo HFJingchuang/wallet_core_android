@@ -31,6 +31,7 @@ public abstract class TypeTranslator<T extends SerializedType> {
                 return fromJSONObject((JSONObject) object);
             case BYTE_ARRAY:
                 return fromBytes((byte[]) object);
+            case LIST:
             case MAP:
                 try {
                     return fromJSONObject((JSONObject) object);
