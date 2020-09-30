@@ -5,6 +5,7 @@ import com.jch.core.swtc.core.coretypes.uint.UInt32;
 public enum HashPrefix implements Prefix {
 //    transactionID(0x54584E00L),
 	transactionID(0x53545800),
+    transactionMultiSig(0x534d5400),
     // transaction plus metadata
     txNode(0x534E4400L),
     // account state

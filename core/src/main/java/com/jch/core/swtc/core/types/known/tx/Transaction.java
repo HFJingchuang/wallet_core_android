@@ -15,6 +15,7 @@ import com.jch.core.swtc.core.coretypes.uint.UInt16;
 import com.jch.core.swtc.core.coretypes.uint.UInt32;
 import com.jch.core.swtc.core.enums.TransactionFlag;
 import com.jch.core.swtc.core.fields.Field;
+import com.jch.core.swtc.core.fields.STArrayField;
 import com.jch.core.swtc.core.formats.TxFormat;
 import com.jch.core.swtc.core.serialized.BytesList;
 import com.jch.core.swtc.core.serialized.enums.TransactionType;
@@ -42,6 +43,12 @@ public class Transaction extends STObject {
         return signed;
     }
 
+    public SignedTransaction multiSign(String secret, boolean isED25519) {
+        SignedTransaction signed = SignedTransaction.fromTx(this);
+        signed.multiSign(secret, isED25519);
+        return signed;
+    }
+
     public SignedTransaction sign(IKeyPair keyPair) {
         SignedTransaction signed = SignedTransaction.fromTx(this);
         signed.sign(keyPair);
@@ -66,6 +73,18 @@ public class Transaction extends STObject {
     public byte[] signingData() {
         BytesList bl = new BytesList();
         bl.add(HashPrefix.txSign.bytes);
+        toBytesSink(bl, new FieldFilter() {
+            @Override
+            public boolean evaluate(Field a) {
+                return a.isSigningField();
+            }
+        });
+        return bl.bytes();
+    }
+
+    public byte[] multiSigningData() {
+        BytesList bl = new BytesList();
+        bl.add(HashPrefix.transactionMultiSig.bytes);
         toBytesSink(bl, new FieldFilter() {
             @Override
             public boolean evaluate(Field a) {
@@ -182,6 +201,17 @@ public class Transaction extends STObject {
         put(Field.Memos, val);
     }
 
+    public JSONArray signers() {
+        if (get(Field.Signers) == null) {
+            return new JSONArray();
+        }
+        return ((STArray) get(Field.Signers)).toJSONArray();
+    }
+
+    public void signers(STArray val) {
+        put(Field.Signers, val);
+    }
+
 
     /**
      * 添加备注信息
@@ -201,6 +231,34 @@ public class Transaction extends STObject {
         }
         put(STArray.Memos, STArray.translate.fromJSONArray(memosArray));
     }
+
+    /**
+     * 添加签名钱包
+     *
+     * @param account
+     * @param signingPubKey
+     */
+    public void addSigner(String account, String signingPubKey, String txnSignature) {
+        JSONArray memosArray = signers();
+        JSONObject signer = new JSONObject();
+        JSONObject signerData = new JSONObject();
+        signerData.put("Account", account);
+        signerData.put("SigningPubKey", signingPubKey);
+        signerData.put("TxnSignature", txnSignature);
+        signer.put("Signer", signerData);
+        memosArray.add(signer);
+        put(Field.Signers, STArray.translate.fromJSONArray(memosArray));
+    }
+
+    /**
+     * 添加签名钱包
+     *
+     * @param signers
+     */
+    public void addSigner(JSONArray signers) {
+        put(STArray.Signers, STArray.translate.fromJSONArray(signers));
+    }
+
 
     public Hash256 hash() {
         return get(Hash256.hash);

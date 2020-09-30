@@ -1,9 +1,9 @@
 package com.jch.core.swtc.core.types.known.tx.signed;
 
 import com.jch.core.cypto.IKeyPair;
-import com.jch.core.exceptions.PrivateKeyFormatException;
+import com.jch.core.swtc.Config;
 import com.jch.core.swtc.JWallet;
-import com.jch.core.swtc.Seed;
+import com.jch.core.swtc.K256KeyPair;
 import com.jch.core.swtc.core.coretypes.Amount;
 import com.jch.core.swtc.core.coretypes.Blob;
 import com.jch.core.swtc.core.coretypes.STObject;
@@ -11,10 +11,13 @@ import com.jch.core.swtc.core.coretypes.hash.HalfSha512;
 import com.jch.core.swtc.core.coretypes.hash.Hash256;
 import com.jch.core.swtc.core.coretypes.hash.prefixes.HashPrefix;
 import com.jch.core.swtc.core.coretypes.uint.UInt32;
+import com.jch.core.swtc.core.fields.Field;
 import com.jch.core.swtc.core.serialized.BytesList;
 import com.jch.core.swtc.core.serialized.MultiSink;
 import com.jch.core.swtc.core.serialized.enums.TransactionType;
 import com.jch.core.swtc.core.types.known.tx.Transaction;
+
+import org.bouncycastle.util.encoders.Hex;
 
 import java.util.Arrays;
 
@@ -89,8 +92,6 @@ public class SignedTransaction {
 
         txn.checkFormat();
         signingData = txn.signingData();
-        //System.out.println("------------");
-        //System.out.println(JsonUtils.toJsonString(txn));
         if (previousSigningData != null && Arrays.equals(signingData, previousSigningData)) {
             return;
         }
@@ -99,6 +100,59 @@ public class SignedTransaction {
 
             BytesList blob = new BytesList();
             HalfSha512 id = HalfSha512.prefixed256(HashPrefix.transactionID);
+            txn.toBytesSink(new MultiSink(blob, id));
+            tx_blob = blob.bytesHex();
+            hash = id.finish();
+        } catch (Exception e) {
+            // electric paranoia
+            previousSigningData = null;
+            throw new RuntimeException(e);
+        } /*else {*/
+        previousSigningData = signingData;
+        // }
+    }
+
+    public void multiSign(String base58Secret, boolean isED25519) {
+        multiSign(JWallet.fromSecret(base58Secret, isED25519));
+    }
+
+    public void multiSign(IKeyPair keyPair) {
+        multiPrepare(keyPair, null, null, null);
+    }
+
+    public void multiPrepare(IKeyPair keyPair,
+                             Amount fee,
+                             UInt32 Sequence,
+                             UInt32 lastLedgerSequence) {
+
+        Blob pubKey = new Blob(new byte[]{});
+//        Blob pubKey = new Blob(keyPair.canonicalPubBytes());
+
+        // This won't always be specified
+        if (lastLedgerSequence != null) {
+            txn.put(UInt32.LastLedgerSequence, lastLedgerSequence);
+        }
+        if (Sequence != null) {
+            txn.put(UInt32.Sequence, Sequence);
+        }
+        if (fee != null) {
+            txn.put(Amount.Fee, fee);
+        }
+
+        txn.signingPubKey(pubKey);
+
+        txn.checkFormat();
+        signingData = txn.multiSigningData();
+        if (previousSigningData != null && Arrays.equals(signingData, previousSigningData)) {
+            return;
+        }
+        try {
+            byte[] signingDataWithACount = new byte[signingData.length + 20];
+            System.arraycopy(signingData, 0, signingDataWithACount, 0, signingData.length);
+            System.arraycopy(keyPair.pub160Hash(), 0, signingDataWithACount, signingData.length, 20);
+            txn.addSigner(keyPair.getAddress(), Hex.toHexString(keyPair.canonicalPubBytes()), new Blob(keyPair.signMessage(signingDataWithACount)).toHex());
+            BytesList blob = new BytesList();
+            HalfSha512 id = HalfSha512.prefixed256(HashPrefix.transactionMultiSig);
             txn.toBytesSink(new MultiSink(blob, id));
             tx_blob = blob.bytesHex();
             hash = id.finish();
