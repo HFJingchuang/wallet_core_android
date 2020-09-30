@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.HFJingchuang'
+group = 'com.github.HFJingchuang'
 
 android {
     compileSdkVersion 29
@@ -40,7 +40,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     // https://mvnrepository.com/artifact/org.web3j/utils
-    implementation group: 'org.web3j', name: 'utils', version: '4.6.0-android'
+    implementation(group: 'org.web3j', name: 'utils', version: '4.6.0-android', {
+        exclude group: 'org.bouncycastle'
+    })
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
     // https://mvnrepository.com/artifact/net.i2p.crypto/eddsa
