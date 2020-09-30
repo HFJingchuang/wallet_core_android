@@ -15,7 +15,6 @@ import com.jch.core.swtc.core.coretypes.uint.UInt16;
 import com.jch.core.swtc.core.coretypes.uint.UInt32;
 import com.jch.core.swtc.core.enums.TransactionFlag;
 import com.jch.core.swtc.core.fields.Field;
-import com.jch.core.swtc.core.fields.STArrayField;
 import com.jch.core.swtc.core.formats.TxFormat;
 import com.jch.core.swtc.core.serialized.BytesList;
 import com.jch.core.swtc.core.serialized.enums.TransactionType;
@@ -52,6 +51,12 @@ public class Transaction extends STObject {
     public SignedTransaction sign(IKeyPair keyPair) {
         SignedTransaction signed = SignedTransaction.fromTx(this);
         signed.sign(keyPair);
+        return signed;
+    }
+
+    public SignedTransaction multiSign(IKeyPair keyPair) {
+        SignedTransaction signed = SignedTransaction.fromTx(this);
+        signed.multiSign(keyPair);
         return signed;
     }
 
